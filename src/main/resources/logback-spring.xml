@@ -14,8 +14,12 @@
 		<captureMdcAttributes>*</captureMdcAttributes>
 	</appender>
 
-	<root level="INFO">
+	<logger name="net.onlydevelop.observability.ObservabilityDemo" level="INFO" additivity="false">
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="OTEL" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
 	</root>
 </configuration>
