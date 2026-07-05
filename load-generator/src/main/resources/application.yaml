@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: load-generator
+
+load-generator:
+  target-base-url: http://localhost:8080
+  min-delay-ms: 200
+  max-delay-ms: 3000
+  min-value: 0
+  max-value: 1000
