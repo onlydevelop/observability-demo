@@ -16,14 +16,14 @@ public class LoadGeneratorRunner implements CommandLineRunner {
 
 	private static final Logger log = LoggerFactory.getLogger(LoadGeneratorRunner.class);
 
+	private static final String[] OPERATIONS = { "add", "subtract" };
+
 	private final LoadGeneratorProperties properties;
 	private final HttpClient httpClient = HttpClient.newHttpClient();
 
 	public LoadGeneratorRunner(LoadGeneratorProperties properties) {
 		this.properties = properties;
 	}
-
-	private static final String[] OPERATIONS = { "add", "subtract" };
 
 	@Override
 	public void run(String... args) throws InterruptedException {
@@ -32,19 +32,41 @@ public class LoadGeneratorRunner implements CommandLineRunner {
 			double a = random.nextDouble(properties.getMinValue(), properties.getMaxValue());
 			double b = random.nextDouble(properties.getMinValue(), properties.getMaxValue());
 			String operation = OPERATIONS[random.nextInt(OPERATIONS.length)];
-			callCalculator(operation, a, b);
+
+			callEndpoint(buildRequestPath(random, operation, a, b));
 
 			long delayMs = random.nextLong(properties.getMinDelayMs(), properties.getMaxDelayMs() + 1);
 			Thread.sleep(delayMs);
 		}
 	}
 
-	private void callCalculator(String operation, double a, double b) {
-		URI uri = URI.create(properties.getTargetBaseUrl() + "/api/calculator/" + operation + "?a=" + a + "&b=" + b);
+	private String buildRequestPath(ThreadLocalRandom random, String operation, double a, double b) {
+		int roll = random.nextInt(100);
+		if (roll < 80) {
+			return "/api/calculator/" + operation + "?a=" + a + "&b=" + b;
+		}
+		if (roll < 87) {
+			// missing required parameter -> 400
+			return "/api/calculator/" + operation + "?a=" + a;
+		}
+		if (roll < 94) {
+			// non-numeric parameter -> 400
+			return "/api/calculator/" + operation + "?a=not-a-number&b=" + b;
+		}
+		if (roll < 97) {
+			// unknown operation -> 404
+			return "/api/calculator/multiply?a=" + a + "&b=" + b;
+		}
+		// forced server-side failure -> 500
+		return "/api/calculator/" + operation + "?a=" + a + "&b=" + b + "&fail=true";
+	}
+
+	private void callEndpoint(String path) {
+		URI uri = URI.create(properties.getTargetBaseUrl() + path);
 		HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
 		try {
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-			log.info("{}({}, {}) -> status={} body={}", operation, a, b, response.statusCode(), response.body());
+			log.info("GET {} -> status={} body={}", path, response.statusCode(), response.body());
 		}
 		catch (Exception ex) {
 			log.warn("Failed to call calculator service at {}: {}", uri, ex.getMessage());

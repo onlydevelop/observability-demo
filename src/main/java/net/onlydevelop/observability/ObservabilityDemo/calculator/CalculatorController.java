@@ -14,13 +14,21 @@ public class CalculatorController {
 	}
 
 	@GetMapping("/api/calculator/add")
-	public double add(@RequestParam double a, @RequestParam double b) {
+	public double add(@RequestParam double a, @RequestParam double b, @RequestParam(defaultValue = "false") boolean fail) {
+		simulateFailureIfRequested(fail);
 		return calculatorService.add(a, b);
 	}
 
 	@GetMapping("/api/calculator/subtract")
-	public double subtract(@RequestParam double a, @RequestParam double b) {
+	public double subtract(@RequestParam double a, @RequestParam double b, @RequestParam(defaultValue = "false") boolean fail) {
+		simulateFailureIfRequested(fail);
 		return calculatorService.subtract(a, b);
+	}
+
+	private void simulateFailureIfRequested(boolean fail) {
+		if (fail) {
+			throw new IllegalStateException("Simulated failure requested via fail=true");
+		}
 	}
 
 }
