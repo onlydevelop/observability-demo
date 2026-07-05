@@ -1,0 +1,122 @@
+{
+  "title": "ObservabilityDemo",
+  "uid": "observability-demo",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "timezone": "browser",
+  "time": { "from": "now-30m", "to": "now" },
+  "refresh": "10s",
+  "panels": [
+    { "type": "row", "title": "Application Uptime", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }, "id": 100 },
+    {
+      "type": "stat",
+      "title": "observability-demo uptime",
+      "id": 1,
+      "gridPos": { "h": 4, "w": 12, "x": 0, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "process_uptime_milliseconds{exported_job=\"ObservabilityDemo\"} / 1000", "legendFormat": "uptime" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+    },
+    {
+      "type": "stat",
+      "title": "load-generator uptime",
+      "id": 2,
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "process_uptime_milliseconds{exported_job=\"load-generator\"} / 1000", "legendFormat": "uptime" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+    },
+
+    { "type": "row", "title": "Load", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 }, "id": 101 },
+    {
+      "type": "timeseries",
+      "title": "CPU Usage",
+      "id": 3,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "process_cpu_usage", "legendFormat": "{{exported_job}} process" },
+        { "expr": "system_cpu_usage", "legendFormat": "{{exported_job}} system" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] }
+    },
+    {
+      "type": "timeseries",
+      "title": "System Load Average (1m)",
+      "id": 4,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "system_load_average_1m", "legendFormat": "{{exported_job}}" }
+      ],
+      "fieldConfig": { "defaults": {}, "overrides": [] }
+    },
+
+    { "type": "row", "title": "JVM Metrics", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 }, "id": 102 },
+    {
+      "type": "timeseries",
+      "title": "JVM Heap Memory Used vs Max",
+      "id": 5,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "sum by (exported_job) (jvm_memory_used_bytes{area=\"heap\"})", "legendFormat": "{{exported_job}} used" },
+        { "expr": "sum by (exported_job) (jvm_memory_max_bytes{area=\"heap\"})", "legendFormat": "{{exported_job}} max" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] }
+    },
+    {
+      "type": "timeseries",
+      "title": "JVM Live Threads",
+      "id": 6,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "jvm_threads_live", "legendFormat": "{{exported_job}}" }
+      ],
+      "fieldConfig": { "defaults": {}, "overrides": [] }
+    },
+    {
+      "type": "timeseries",
+      "title": "JVM GC Pause Time",
+      "id": 7,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 23 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "sum by (exported_job) (rate(jvm_gc_pause_milliseconds_sum[5m]))", "legendFormat": "{{exported_job}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" }, "overrides": [] }
+    },
+
+    { "type": "row", "title": "HTTP Metrics (observability-demo traffic from load-generator)", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 }, "id": 103 },
+    {
+      "type": "timeseries",
+      "title": "HTTP Request Rate by Status Class",
+      "id": 8,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "sum(rate(http_server_requests_milliseconds_count{exported_job=\"ObservabilityDemo\", status=~\"2..\"}[1m]))", "legendFormat": "2xx" },
+        { "expr": "sum(rate(http_server_requests_milliseconds_count{exported_job=\"ObservabilityDemo\", status=~\"4..\"}[1m]))", "legendFormat": "4xx" },
+        { "expr": "sum(rate(http_server_requests_milliseconds_count{exported_job=\"ObservabilityDemo\", status=~\"5..\"}[1m]))", "legendFormat": "5xx" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Request Rate by Endpoint",
+      "id": 9,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "sum by (uri) (rate(http_server_requests_milliseconds_count{exported_job=\"ObservabilityDemo\"}[1m]))", "legendFormat": "{{uri}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
+    }
+  ]
+}
