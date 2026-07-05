@@ -198,6 +198,40 @@
         { "expr": "{service_name=\"rounding-service\"}", "datasource": { "type": "loki", "uid": "loki" } }
       ],
       "options": { "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true }
+    },
+
+    { "type": "row", "title": "Traces", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 60 }, "id": 106 },
+    {
+      "type": "table",
+      "title": "calculator-service recent traces",
+      "id": 15,
+      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 61 },
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "targets": [
+        {
+          "datasource": { "type": "tempo", "uid": "tempo" },
+          "queryType": "traceql",
+          "query": "{resource.service.name=\"calculator-service\"}",
+          "tableType": "traces",
+          "limit": 20
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "rounding-service recent traces",
+      "id": 16,
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 61 },
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "targets": [
+        {
+          "datasource": { "type": "tempo", "uid": "tempo" },
+          "queryType": "traceql",
+          "query": "{resource.service.name=\"rounding-service\"}",
+          "tableType": "traces",
+          "limit": 20
+        }
+      ]
     }
   ]
 }

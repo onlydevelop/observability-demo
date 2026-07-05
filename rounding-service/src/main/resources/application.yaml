@@ -3,6 +3,9 @@ spring:
     name: rounding-service
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
   otlp:
     metrics:
       export:
@@ -12,3 +15,7 @@ management:
       export:
         otlp:
           endpoint: http://otel-collector:4318/v1/logs
+    tracing:
+      export:
+        otlp:
+          endpoint: http://otel-collector:4318/v1/traces

@@ -13,3 +13,15 @@ datasources:
     uid: loki
     access: proxy
     url: http://loki:3100
+
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: http://tempo:3200
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: loki
+        tags: [{ key: "service.name", value: "service_name" }]
+        filterByTraceID: false
+        filterBySpanID: false
