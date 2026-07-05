@@ -11,12 +11,12 @@
     { "type": "row", "title": "Application Uptime", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }, "id": 100 },
     {
       "type": "stat",
-      "title": "observability-demo uptime",
+      "title": "calculator-service uptime",
       "id": 1,
       "gridPos": { "h": 4, "w": 12, "x": 0, "y": 1 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        { "expr": "process_uptime_milliseconds{exported_job=\"ObservabilityDemo\"} / 1000", "legendFormat": "uptime" }
+        { "expr": "process_uptime_milliseconds{exported_job=\"calculator-service\"} / 1000", "legendFormat": "uptime" }
       ],
       "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
     },
@@ -93,7 +93,7 @@
       "fieldConfig": { "defaults": { "unit": "ms" }, "overrides": [] }
     },
 
-    { "type": "row", "title": "HTTP Metrics (observability-demo traffic from load-generator)", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 }, "id": 103 },
+    { "type": "row", "title": "HTTP Metrics (calculator-service traffic from load-generator)", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 }, "id": 103 },
     {
       "type": "timeseries",
       "title": "HTTP Request Rate by Status Class",
@@ -101,9 +101,9 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        { "expr": "sum(rate(http_server_requests_milliseconds_count{exported_job=\"ObservabilityDemo\", status=~\"2..\"}[2m])) OR on() vector(0)", "legendFormat": "2xx" },
-        { "expr": "sum(rate(http_server_requests_milliseconds_count{exported_job=\"ObservabilityDemo\", status=~\"4..\"}[2m])) OR on() vector(0)", "legendFormat": "4xx" },
-        { "expr": "sum(rate(http_server_requests_milliseconds_count{exported_job=\"ObservabilityDemo\", status=~\"5..\"}[2m])) OR on() vector(0)", "legendFormat": "5xx" }
+        { "expr": "sum(rate(http_server_requests_milliseconds_count{exported_job=\"calculator-service\", status=~\"2..\"}[2m])) OR on() vector(0)", "legendFormat": "2xx" },
+        { "expr": "sum(rate(http_server_requests_milliseconds_count{exported_job=\"calculator-service\", status=~\"4..\"}[2m])) OR on() vector(0)", "legendFormat": "4xx" },
+        { "expr": "sum(rate(http_server_requests_milliseconds_count{exported_job=\"calculator-service\", status=~\"5..\"}[2m])) OR on() vector(0)", "legendFormat": "5xx" }
       ],
       "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
     },
@@ -114,7 +114,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        { "expr": "sum by (uri) (rate(http_server_requests_milliseconds_count{exported_job=\"ObservabilityDemo\"}[2m]))", "legendFormat": "{{uri}}" }
+        { "expr": "sum by (uri) (rate(http_server_requests_milliseconds_count{exported_job=\"calculator-service\"}[2m]))", "legendFormat": "{{uri}}" }
       ],
       "fieldConfig": {
         "defaults": {
@@ -132,12 +132,12 @@
     { "type": "row", "title": "Logs", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 40 }, "id": 104 },
     {
       "type": "logs",
-      "title": "observability-demo logs",
+      "title": "calculator-service logs",
       "id": 10,
       "gridPos": { "h": 10, "w": 24, "x": 0, "y": 41 },
       "datasource": { "type": "loki", "uid": "loki" },
       "targets": [
-        { "expr": "{service_name=\"ObservabilityDemo\"}", "datasource": { "type": "loki", "uid": "loki" } }
+        { "expr": "{service_name=\"calculator-service\"}", "datasource": { "type": "loki", "uid": "loki" } }
       ],
       "options": { "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true }
     }

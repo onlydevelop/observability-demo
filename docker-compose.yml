@@ -1,6 +1,6 @@
 services:
-  observability-demo:
-    build: .
+  calculator-service:
+    build: ./calculator-service
     ports:
       - "8080:8080"
     networks:
@@ -10,9 +10,9 @@ services:
   load-generator:
     build: ./load-generator
     environment:
-      LOAD_GENERATOR_TARGET_BASE_URL: http://observability-demo:8080
+      LOAD_GENERATOR_TARGET_BASE_URL: http://calculator-service:8080
     depends_on:
-      - observability-demo
+      - calculator-service
     networks:
       - default
       - observability
