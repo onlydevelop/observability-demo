@@ -2,6 +2,9 @@ spring:
   application:
     name: calculator-service
 
+rounding-service:
+  base-url: http://rounding-service:8080
+
 management:
   otlp:
     metrics:
