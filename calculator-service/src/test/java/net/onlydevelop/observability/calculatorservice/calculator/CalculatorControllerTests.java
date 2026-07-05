@@ -1,8 +1,8 @@
 package net.onlydevelop.observability.calculatorservice.calculator;
 
 import jakarta.servlet.ServletException;
-import net.onlydevelop.observability.calculatorservice.rounding.RoundedNumbers;
-import net.onlydevelop.observability.calculatorservice.rounding.RoundingClient;
+import net.onlydevelop.observability.calculatorservice.RoundedNumbers;
+import net.onlydevelop.observability.calculatorservice.RoundingClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

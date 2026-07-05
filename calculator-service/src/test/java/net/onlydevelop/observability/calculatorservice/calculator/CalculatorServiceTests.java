@@ -1,7 +1,7 @@
 package net.onlydevelop.observability.calculatorservice.calculator;
 
-import net.onlydevelop.observability.calculatorservice.rounding.RoundedNumbers;
-import net.onlydevelop.observability.calculatorservice.rounding.RoundingClient;
+import net.onlydevelop.observability.calculatorservice.RoundedNumbers;
+import net.onlydevelop.observability.calculatorservice.RoundingClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

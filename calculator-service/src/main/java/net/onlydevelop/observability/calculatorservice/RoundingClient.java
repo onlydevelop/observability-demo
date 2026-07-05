@@ -1,4 +1,4 @@
-package net.onlydevelop.observability.calculatorservice.rounding;
+package net.onlydevelop.observability.calculatorservice;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
