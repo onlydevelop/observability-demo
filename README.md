@@ -5,24 +5,29 @@ A minimal Spring Boot application demonstrating an end-to-end observability stac
 ## Architecture
 
 ```
-load-generator ──HTTP──▶ calculator-service (calculator API)
-      │                          │
-      └──────────OTLP (metrics + logs)──────────▶ otel-collector
-                                                        │
-                                        ┌───────────────┴───────────────┐
-                                        ▼                               ▼
-                                   Prometheus                         Loki
-                                (scrapes metrics)              (receives logs via OTLP)
-                                        │                               │
-                                        └───────────────┬───────────────┘
-                                                         ▼
-                                                      Grafana
-                                            (dashboards over both datasources)
+load-generator ──HTTP──▶ calculator-service
+                          rounding-service
+                                │
+             (all three apps, OTLP: metrics + logs)
+                                │
+                                ▼
+                          otel-collector
+                                │
+                ┌───────────────┴───────────────┐
+                ▼                               ▼
+           Prometheus                         Loki
+        (scrapes metrics)              (receives logs via OTLP)
+                │                               │
+                └───────────────┬───────────────┘
+                                ▼
+                             Grafana
+                   (dashboards over both datasources)
 ```
 
 - **calculator-service** — Spring Boot app exposing a simple calculator REST API (`/api/calculator/add`, `/api/calculator/subtract`). Emits metrics and logs over OTLP.
+- **rounding-service** — Spring Boot app exposing a rounding REST API (`/api/rounding/round`) that rounds two numbers to a given number of decimal digits. Emits metrics and logs over OTLP.
 - **load-generator** — Spring Boot app that continuously calls the calculator API at randomized intervals/values to produce steady traffic (and emits its own metrics).
-- **otel-collector** — Receives OTLP metrics/logs from both apps, exposes metrics for Prometheus to scrape, and forwards logs to Loki.
+- **otel-collector** — Receives OTLP metrics/logs from all three apps, exposes metrics for Prometheus to scrape, and forwards logs to Loki.
 - **Prometheus** — Scrapes metrics from the otel-collector.
 - **Loki** — Stores logs shipped from the otel-collector.
 - **Grafana** — Pre-provisioned with Prometheus + Loki datasources and an `ObservabilityDemo` dashboard.
@@ -41,7 +46,7 @@ From the repository root:
 docker compose up --build
 ```
 
-This starts all six services: `calculator-service`, `load-generator`, `otel-collector`, `prometheus`, `loki`, and `grafana`.
+This starts all seven services: `calculator-service`, `rounding-service`, `load-generator`, `otel-collector`, `prometheus`, `loki`, and `grafana`.
 
 To stop everything:
 
@@ -54,6 +59,7 @@ docker compose down
 | Service            | Port | URL                                      |
 |--------------------|------|-------------------------------------------|
 | calculator-service | 8080 | http://localhost:8080                     |
+| rounding-service   | 8081 | http://localhost:8081                     |
 | Grafana            | 3000 | http://localhost:3000                     |
 | Prometheus         | 9090 | http://localhost:9090                     |
 | Loki               | 3100 | http://localhost:3100 (queried via Grafana) |
@@ -97,10 +103,16 @@ curl "http://localhost:8080/api/calculator/add?a=2&b=3&fail=true"
 
 The `load-generator` service does this automatically in the background at randomized intervals, so the dashboard will show live traffic without any manual calls.
 
+The `rounding-service` runs alongside it and can be called the same way (it isn't driven by `load-generator`):
+
+```bash
+curl "http://localhost:8081/api/rounding/round?a=3.14159&b=2.71828&roundedUpto=2"
+```
+
 ## Configuration
 
 - `load-generator` behavior (target URL, request delay range, value range) is configured via `load-generator/src/main/resources/application.yaml`, and can be overridden with environment variables (see `LOAD_GENERATOR_TARGET_BASE_URL` in `docker-compose.yml`).
-- OTLP export endpoints for both apps are configured in their respective `application.yaml` files, pointing at the `otel-collector` service.
+- OTLP export endpoints for all three apps are configured in their respective `application.yaml` files, pointing at the `otel-collector` service.
 - Collector pipelines (metrics → Prometheus, logs → Loki) are defined in `otel-collector-config.yaml`.
 
 ## Running components individually (without Docker)
@@ -109,15 +121,19 @@ The `load-generator` service does this automatically in the background at random
 # calculator-service
 cd calculator-service && ./gradlew bootRun
 
+# rounding-service
+cd rounding-service && ./gradlew bootRun
+
 # load-generator
 cd load-generator && ./gradlew bootRun
 ```
 
-Note: both apps default to OTLP endpoints pointing at `otel-collector` (Docker service name), so running them standalone requires either the rest of the stack to also be up via `docker compose up otel-collector prometheus loki grafana`, or overriding the OTLP/target URLs to point at `localhost`.
+Note: all three apps default to OTLP endpoints pointing at `otel-collector` (Docker service name), so running them standalone requires either the rest of the stack to also be up via `docker compose up otel-collector prometheus loki grafana`, or overriding the OTLP/target URLs to point at `localhost`.
 
 ## Running tests
 
 ```bash
 cd calculator-service && ./gradlew test
+cd rounding-service && ./gradlew test
 cd load-generator && ./gradlew test
 ```

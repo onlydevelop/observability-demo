@@ -1,4 +1,4 @@
-package net.onlydevelop.observability.calculatorservice.rounding;
+package net.onlydevelop.observability.roundingservice.rounding;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

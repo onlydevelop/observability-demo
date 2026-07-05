@@ -1,4 +1,4 @@
-package net.onlydevelop.observability.calculatorservice.rounding;
+package net.onlydevelop.observability.roundingservice.rounding;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -7,6 +7,14 @@ services:
       - default
       - observability
 
+  rounding-service:
+    build: ./rounding-service
+    ports:
+      - "8081:8080"
+    networks:
+      - default
+      - observability
+
   load-generator:
     build: ./load-generator
     environment:
