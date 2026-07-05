@@ -1,4 +1,4 @@
-package net.onlydevelop.observability.ObservabilityDemo;
+package net.onlydevelop.observability.ObservabilityDemo.calculator;
 
 import org.springframework.stereotype.Service;
 
