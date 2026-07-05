@@ -64,6 +64,7 @@ public class LoadGeneratorRunner implements CommandLineRunner {
 	private void callEndpoint(String path) {
 		URI uri = URI.create(properties.getTargetBaseUrl() + path);
 		HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
+		log.info("Sending GET {}", uri);
 		try {
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 			log.info("GET {} -> status={} body={}", path, response.statusCode(), response.body());
