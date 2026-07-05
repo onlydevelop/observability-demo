@@ -3,8 +3,6 @@ services:
     build: ./calculator-service
     ports:
       - "8080:8080"
-    depends_on:
-      - rounding-service
     networks:
       - default
       - observability

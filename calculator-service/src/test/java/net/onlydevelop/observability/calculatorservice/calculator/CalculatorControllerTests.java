@@ -1,20 +1,13 @@
 package net.onlydevelop.observability.calculatorservice.calculator;
 
 import jakarta.servlet.ServletException;
-import net.onlydevelop.observability.calculatorservice.RoundedNumbers;
-import net.onlydevelop.observability.calculatorservice.RoundingClient;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,15 +18,6 @@ class CalculatorControllerTests {
 
 	@Autowired
 	private MockMvc mockMvc;
-
-	@MockitoBean
-	private RoundingClient roundingClient;
-
-	@BeforeEach
-	void stubRoundingClientToPassValuesThrough() {
-		when(roundingClient.round(anyDouble(), anyDouble(), anyInt()))
-				.thenAnswer(invocation -> new RoundedNumbers(invocation.getArgument(0), invocation.getArgument(1)));
-	}
 
 	@Test
 	void addsTwoNumbers() throws Exception {
