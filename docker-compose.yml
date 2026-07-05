@@ -3,6 +3,9 @@ services:
     build: .
     ports:
       - "8080:8080"
+    networks:
+      - default
+      - observability
 
   load-generator:
     build: ./load-generator
@@ -10,3 +13,21 @@ services:
       LOAD_GENERATOR_TARGET_BASE_URL: http://observability-demo:8080
     depends_on:
       - observability-demo
+    networks:
+      - default
+      - observability
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "8889:8889"
+    networks:
+      - observability
+
+networks:
+  observability:

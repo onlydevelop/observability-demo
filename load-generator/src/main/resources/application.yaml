@@ -2,6 +2,12 @@ spring:
   application:
     name: load-generator
 
+management:
+  otlp:
+    metrics:
+      export:
+        url: http://otel-collector:4318/v1/metrics
+
 load-generator:
   target-base-url: http://localhost:8080
   min-delay-ms: 200
