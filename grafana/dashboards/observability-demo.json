@@ -116,7 +116,17 @@
       "targets": [
         { "expr": "sum by (uri) (rate(http_server_requests_milliseconds_count{exported_job=\"ObservabilityDemo\"}[2m]))", "legendFormat": "{{uri}}" }
       ],
-      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "stacking": { "mode": "normal", "group": "A" }
+          }
+        },
+        "overrides": []
+      }
     },
 
     { "type": "row", "title": "Logs", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 40 }, "id": 104 },
