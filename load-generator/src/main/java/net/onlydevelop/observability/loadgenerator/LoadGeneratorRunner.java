@@ -23,25 +23,28 @@ public class LoadGeneratorRunner implements CommandLineRunner {
 		this.properties = properties;
 	}
 
+	private static final String[] OPERATIONS = { "add", "subtract" };
+
 	@Override
 	public void run(String... args) throws InterruptedException {
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		while (!Thread.currentThread().isInterrupted()) {
 			double a = random.nextDouble(properties.getMinValue(), properties.getMaxValue());
 			double b = random.nextDouble(properties.getMinValue(), properties.getMaxValue());
-			callCalculator(a, b);
+			String operation = OPERATIONS[random.nextInt(OPERATIONS.length)];
+			callCalculator(operation, a, b);
 
 			long delayMs = random.nextLong(properties.getMinDelayMs(), properties.getMaxDelayMs() + 1);
 			Thread.sleep(delayMs);
 		}
 	}
 
-	private void callCalculator(double a, double b) {
-		URI uri = URI.create(properties.getTargetBaseUrl() + "/api/calculator/add?a=" + a + "&b=" + b);
+	private void callCalculator(String operation, double a, double b) {
+		URI uri = URI.create(properties.getTargetBaseUrl() + "/api/calculator/" + operation + "?a=" + a + "&b=" + b);
 		HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
 		try {
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-			log.info("add({}, {}) -> status={} body={}", a, b, response.statusCode(), response.body());
+			log.info("{}({}, {}) -> status={} body={}", operation, a, b, response.statusCode(), response.body());
 		}
 		catch (Exception ex) {
 			log.warn("Failed to call calculator service at {}: {}", uri, ex.getMessage());

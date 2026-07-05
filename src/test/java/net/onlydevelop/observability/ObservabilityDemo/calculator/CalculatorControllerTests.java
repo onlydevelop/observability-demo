@@ -24,4 +24,11 @@ class CalculatorControllerTests {
 				.andExpect(content().string("5.0"));
 	}
 
+	@Test
+	void subtractsTwoNumbers() throws Exception {
+		mockMvc.perform(get("/api/calculator/subtract").param("a", "5").param("b", "3"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("2.0"));
+	}
+
 }

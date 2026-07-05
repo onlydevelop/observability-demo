@@ -18,4 +18,9 @@ public class CalculatorController {
 		return calculatorService.add(a, b);
 	}
 
+	@GetMapping("/api/calculator/subtract")
+	public double subtract(@RequestParam double a, @RequestParam double b) {
+		return calculatorService.subtract(a, b);
+	}
+
 }

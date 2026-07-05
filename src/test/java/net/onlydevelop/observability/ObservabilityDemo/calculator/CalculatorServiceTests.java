@@ -13,4 +13,9 @@ class CalculatorServiceTests {
 		assertThat(calculatorService.add(2, 3)).isEqualTo(5);
 	}
 
+	@Test
+	void subtractsTwoNumbers() {
+		assertThat(calculatorService.subtract(5, 3)).isEqualTo(2);
+	}
+
 }
