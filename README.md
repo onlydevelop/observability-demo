@@ -56,6 +56,34 @@ To stop everything:
 docker compose down
 ```
 
+### Using the Makefile
+
+A root-level `Makefile` wraps the common Docker Compose and Gradle commands:
+
+```bash
+make up      # docker compose up -d (stack in the background)
+make upb     # docker compose up --build (rebuild images first)
+make down    # docker compose down
+make logs    # docker compose logs -f
+```
+
+It also wraps Gradle build/test/clean for each service individually, or all three at once:
+
+```bash
+make build                        # build all three services
+make build-calculator-service      # build just calculator-service
+make build-rounding-service        # build just rounding-service
+make build-load-generator          # build just load-generator
+
+make test                         # test all three services
+make test-calculator-service       # test just calculator-service
+make test-rounding-service         # test just rounding-service
+make test-load-generator           # test just load-generator
+
+make clean                        # clean all three services
+make clean-calculator-service      # clean just calculator-service
+```
+
 ## Exposed ports
 
 | Service            | Port | URL                                      |
@@ -69,7 +97,7 @@ docker compose down
 | otel-collector     | 4317 / 4318 | gRPC / HTTP OTLP receiver endpoints |
 | otel-collector      | 8889 | http://localhost:8889/metrics (Prometheus scrape endpoint) |
 
-## Viewing metrics and logs
+## Viewing metrics, logs, and traces in Grafana
 
 1. Open Grafana at **http://localhost:3000** (default login: `admin` / `admin`).
 2. Open the **ObservabilityDemo** dashboard (auto-provisioned, no manual import needed). It includes:
@@ -143,4 +171,11 @@ Note: all three apps default to OTLP endpoints pointing at `otel-collector` (Doc
 cd apps/calculator-service && ./gradlew test
 cd apps/rounding-service && ./gradlew test
 cd apps/load-generator && ./gradlew test
+```
+
+Or, via the Makefile:
+
+```bash
+make test                     # all three services
+make test-calculator-service  # just one service
 ```
