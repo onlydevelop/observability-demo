@@ -117,22 +117,22 @@ curl "http://localhost:8081/api/rounding/round?a=3.14159&b=2.71828&roundedUpto=2
 
 ## Configuration
 
-- `load-generator` behavior (target URL, request delay range, value range) is configured via `load-generator/src/main/resources/application.yaml`, and can be overridden with environment variables (see `LOAD_GENERATOR_TARGET_BASE_URL` in `docker-compose.yml`).
-- `calculator-service`'s `rounding-service` URL is configured via `rounding-service.base-url` in `calculator-service/src/main/resources/application.yaml` (defaults to `http://rounding-service:8080`), and can be overridden with the `ROUNDING_SERVICE_BASE_URL` environment variable.
+- `load-generator` behavior (target URL, request delay range, value range) is configured via `apps/load-generator/src/main/resources/application.yaml`, and can be overridden with environment variables (see `LOAD_GENERATOR_TARGET_BASE_URL` in `docker-compose.yml`).
+- `calculator-service`'s `rounding-service` URL is configured via `rounding-service.base-url` in `apps/calculator-service/src/main/resources/application.yaml` (defaults to `http://rounding-service:8080`), and can be overridden with the `ROUNDING_SERVICE_BASE_URL` environment variable.
 - OTLP export endpoints for all three apps are configured in their respective `application.yaml` files, pointing at the `otel-collector` service. Trace sampling is set to 100% (`management.tracing.sampling.probability`) so every request produces a trace.
-- Collector pipelines (metrics → Prometheus, logs → Loki, traces → Tempo) are defined in `otel-collector-config.yaml`. Tempo's own OTLP receiver config is in `tempo-config.yaml`.
+- Collector pipelines (metrics → Prometheus, logs → Loki, traces → Tempo) are defined in `observability/otel-collector/config.yaml`. Tempo's own OTLP receiver config is in `observability/tempo/tempo.yaml`.
 
 ## Running components individually (without Docker)
 
 ```bash
 # calculator-service
-cd calculator-service && ./gradlew bootRun
+cd apps/calculator-service && ./gradlew bootRun
 
 # rounding-service
-cd rounding-service && ./gradlew bootRun
+cd apps/rounding-service && ./gradlew bootRun
 
 # load-generator
-cd load-generator && ./gradlew bootRun
+cd apps/load-generator && ./gradlew bootRun
 ```
 
 Note: all three apps default to OTLP endpoints pointing at `otel-collector` (Docker service name), so running them standalone requires either the rest of the stack to also be up via `docker compose up otel-collector prometheus loki grafana`, or overriding the OTLP/target URLs to point at `localhost`.
@@ -140,7 +140,7 @@ Note: all three apps default to OTLP endpoints pointing at `otel-collector` (Doc
 ## Running tests
 
 ```bash
-cd calculator-service && ./gradlew test
-cd rounding-service && ./gradlew test
-cd load-generator && ./gradlew test
+cd apps/calculator-service && ./gradlew test
+cd apps/rounding-service && ./gradlew test
+cd apps/load-generator && ./gradlew test
 ```

@@ -1,6 +1,6 @@
 services:
   calculator-service:
-    build: ./calculator-service
+    build: ./apps/calculator-service
     ports:
       - "8080:8080"
     depends_on:
@@ -10,7 +10,7 @@ services:
       - observability
 
   rounding-service:
-    build: ./rounding-service
+    build: ./apps/rounding-service
     ports:
       - "8081:8080"
     networks:
@@ -18,7 +18,7 @@ services:
       - observability
 
   load-generator:
-    build: ./load-generator
+    build: ./apps/load-generator
     environment:
       LOAD_GENERATOR_TARGET_BASE_URL: http://calculator-service:8080
     depends_on:
@@ -31,7 +31,7 @@ services:
     image: otel/opentelemetry-collector-contrib:latest
     command: ["--config=/etc/otelcol-contrib/config.yaml"]
     volumes:
-      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+      - ./observability/otel-collector/config.yaml:/etc/otelcol-contrib/config.yaml
     ports:
       - "4317:4317"
       - "4318:4318"
@@ -46,7 +46,7 @@ services:
     image: grafana/loki:latest
     command: ["-config.file=/etc/loki/loki-config.yaml"]
     volumes:
-      - ./loki-config.yaml:/etc/loki/loki-config.yaml
+      - ./observability/loki/loki-config.yaml:/etc/loki/loki-config.yaml
     ports:
       - "3100:3100"
     networks:
@@ -56,7 +56,7 @@ services:
     image: grafana/tempo:latest
     command: ["-config.file=/etc/tempo/tempo.yaml"]
     volumes:
-      - ./tempo-config.yaml:/etc/tempo/tempo.yaml
+      - ./observability/tempo/tempo.yaml:/etc/tempo/tempo.yaml
     ports:
       - "3200:3200"
     networks:
@@ -65,7 +65,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     depends_on:
@@ -76,8 +76,8 @@ services:
   grafana:
     image: grafana/grafana:latest
     volumes:
-      - ./grafana/provisioning:/etc/grafana/provisioning
-      - ./grafana/dashboards:/etc/grafana/dashboards
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning
+      - ./observability/grafana/dashboards:/etc/grafana/dashboards
     ports:
       - "3000:3000"
     depends_on:
